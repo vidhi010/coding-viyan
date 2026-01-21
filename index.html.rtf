@@ -1,0 +1,325 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2761
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!DOCTYPE html>\
+<html lang="en">\
+<head>\
+    <meta charset="UTF-8">\
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
+    <title>Coding Challenge</title>\
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>\
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>\
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>\
+    <script src="https://cdn.tailwindcss.com"></script>\
+    <style>\
+        @keyframes bounce \{\
+            0%, 100% \{ transform: translateY(0); \}\
+            50% \{ transform: translateY(-25px); \}\
+        \}\
+        @keyframes pulse \{\
+            0%, 100% \{ opacity: 1; \}\
+            50% \{ opacity: .5; \}\
+        \}\
+        .animate-bounce \{ animation: bounce 1s infinite; \}\
+        .animate-pulse \{ animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; \}\
+    </style>\
+</head>\
+<body>\
+    <div id="root"></div>\
+    \
+    <script type="text/babel">\
+        const \{ useState, useEffect \} = React;\
+        \
+        const Icon = (\{ type, className = "" \}) => \{\
+            const icons = \{\
+                code: <svg className=\{className\} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth=\{2\} d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" /></svg>,\
+                clock: <svg className=\{className\} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth=\{2\} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,\
+                check: <svg className=\{className\} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth=\{2\} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>,\
+                lock: <svg className=\{className\} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth=\{2\} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>,\
+                trophy: <svg className=\{className\} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth=\{2\} d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z" /></svg>,\
+                sparkles: <svg className=\{className\} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth=\{2\} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" /></svg>\
+            \};\
+            return icons[type] || null;\
+        \};\
+\
+        const ValentineHackathon = () => \{\
+            const [currentLevel, setCurrentLevel] = useState(0);\
+            const [userAnswers, setUserAnswers] = useState(['', '', '', '']);\
+            const [showSuccess, setShowSuccess] = useState(false);\
+            const [timeElapsed, setTimeElapsed] = useState(0);\
+            const [isRunning, setIsRunning] = useState(false);\
+\
+            useEffect(() => \{\
+                let interval;\
+                if (isRunning) \{\
+                    interval = setInterval(() => \{\
+                        setTimeElapsed(prev => prev + 1);\
+                    \}, 1000);\
+                \}\
+                return () => clearInterval(interval);\
+            \}, [isRunning]);\
+\
+            const formatTime = (seconds) => \{\
+                const mins = Math.floor(seconds / 60);\
+                const secs = seconds % 60;\
+                return `$\{mins.toString().padStart(2, '0')\}:$\{secs.toString().padStart(2, '0')\}`;\
+            \};\
+\
+            const levels = [\
+                \{\
+                    title: "Level 1: Debug the Code",\
+                    description: "Fix the bug in this Python function to make it work correctly!",\
+                    code: `def create_message():\
+    words = ["I", "think", "you're", "amazing"]\
+    # Bug: Fix the join method\
+    message = words.join(" ")\
+    return message\
+\
+print(create_message())`,\
+                    hint: "The join() method should be called on a string, not a list!",\
+                    answer: '" ".join(words)',\
+                    explanation: "The correct line is: message = ' '.join(words)"\
+                \},\
+                \{\
+                    title: "Level 2: Cipher Challenge",\
+                    description: "This function uses a Caesar cipher with shift of 3. Decode the encrypted text!",\
+                    code: `def decode(encrypted):\
+    shift = 3\
+    decoded = ""\
+    for char in encrypted:\
+        if char.isalpha():\
+            base = ord('A') if char.isupper() else ord('a')\
+            decoded += chr((ord(char) - base - shift) % 26 + base)\
+        else:\
+            decoded += char\
+    return decoded\
+\
+mystery_word = "YDOHQWLQH"\
+print(decode(mystery_word))`,\
+                    hint: "Run the decode function with the mystery word. What do you get?",\
+                    answer: "VALENTINE",\
+                    explanation: "The decoded message is 'VALENTINE'"\
+                \},\
+                \{\
+                    title: "Level 3: Pattern Recognition",\
+                    description: "This code creates a special pattern. What's the optimal size parameter?",\
+                    code: `def print_pattern(size):\
+    # Creates a heart-like pattern\
+    for i in range(size//2, size, 2):\
+        print(' ' * (size-i) + '\uc0\u9829 ' * i + ' ' * (size-i) + '\u9829 ' * i)\
+    \
+    for i in range(size, 0, -1):\
+        print(' ' * (size-i) + '\uc0\u9829 ' * (i*2))\
+    \
+# What number (3-6) creates the best pattern?\
+print_pattern(?)`,\
+                    hint: "Try numbers between 3-6. Test which creates the most balanced pattern.",\
+                    answer: "4",\
+                    explanation: "The answer is 4 - it creates a perfect balanced pattern!"\
+                \},\
+                \{\
+                    title: "Final Challenge: Execute the Code",\
+                    description: "Run this code and answer the question it asks you!",\
+                    code: `class SpecialQuestion:\
+    def __init__(self, recipient):\
+        self.recipient = recipient\
+        self.message = "something important"\
+    \
+    def reveal(self):\
+        print(f"Hey \{self.recipient\}!")\
+        print("I've been wanting to ask you something...")\
+        print()\
+        print("Will you be my Valentine? \uc0\u55357 \u56469 ")\
+        print()\
+        return "What's your answer?"\
+\
+question = SpecialQuestion("you")\
+print(question.reveal())\
+\
+# Type your answer: YES or NO`,\
+                    hint: "I really hope you know the answer I'm hoping for... \uc0\u55357 \u56842 ",\
+                    answer: "YES",\
+                    explanation: "I really hope you said YES! \uc0\u55357 \u56469 "\
+                \}\
+            ];\
+\
+            const handleSubmit = (levelIndex) => \{\
+                const userAnswer = userAnswers[levelIndex].trim().toUpperCase();\
+                const correctAnswer = levels[levelIndex].answer.toUpperCase();\
+                \
+                if (userAnswer === correctAnswer) \{\
+                    if (levelIndex === levels.length - 1) \{\
+                        setShowSuccess(true);\
+                        setIsRunning(false);\
+                    \} else \{\
+                        setCurrentLevel(levelIndex + 1);\
+                    \}\
+                \} else \{\
+                    alert("Not quite! Check the hint and try again! \uc0\u55357 \u56490 ");\
+                \}\
+            \};\
+\
+            const handleInputChange = (index, value) => \{\
+                const newAnswers = [...userAnswers];\
+                newAnswers[index] = value;\
+                setUserAnswers(newAnswers);\
+            \};\
+\
+            const startHackathon = () => \{\
+                setIsRunning(true);\
+                setCurrentLevel(0);\
+            \};\
+\
+            if (!isRunning && currentLevel === 0 && !showSuccess) \{\
+                return (\
+                    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 flex items-center justify-center p-4">\
+                        <div className="bg-white rounded-3xl shadow-2xl p-12 max-w-2xl text-center">\
+                            <Icon type="code" className="w-24 h-24 mx-auto mb-6 text-indigo-600" />\
+                            <h1 className="text-5xl font-bold text-gray-800 mb-4">\
+                                Mini Coding Challenge \uc0\u55357 \u56960 \
+                            </h1>\
+                            <p className="text-xl text-gray-600 mb-8">\
+                                I made a fun coding challenge for you! Solve all 4 levels to unlock a special surprise... \uc0\u55357 \u56842 \
+                            </p>\
+                            <button\
+                                onClick=\{startHackathon\}\
+                                className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-12 py-4 rounded-full text-xl font-semibold hover:from-indigo-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"\
+                            >\
+                                Start Challenge \uc0\u55357 \u56507 \
+                            </button>\
+                        </div>\
+                    </div>\
+                );\
+            \}\
+\
+            if (showSuccess) \{\
+                return (\
+                    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-red-50 to-purple-100 flex items-center justify-center p-4">\
+                        <div className="bg-white rounded-3xl shadow-2xl p-12 max-w-2xl text-center relative overflow-hidden">\
+                            <div className="absolute inset-0 bg-gradient-to-br from-pink-200/20 to-red-200/20"></div>\
+                            <div className="relative z-10">\
+                                <div className="animate-bounce mb-6">\
+                                    <Icon type="trophy" className="w-32 h-32 mx-auto text-yellow-500" />\
+                                </div>\
+                                <h1 className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-red-500 mb-6">\
+                                    You said YES! \uc0\u55356 \u57225 \
+                                </h1>\
+                                <div className="text-8xl mb-6 animate-pulse">\
+                                    \uc0\u55357 \u56469 \
+                                </div>\
+                                <p className="text-2xl text-gray-700 mb-4">\
+                                    Challenge completed in \{formatTime(timeElapsed)\}!\
+                                </p>\
+                                <p className="text-3xl text-pink-600 font-semibold mb-8">\
+                                    Happy Valentine's Day! \uc0\u55357 \u56477 \
+                                </p>\
+                                <div className="bg-pink-50 rounded-2xl p-6 border-2 border-pink-200">\
+                                    <p className="text-xl text-gray-700 leading-relaxed">\
+                                        I'm so happy you're my Valentine! \
+                                        <br />\
+                                        You're amazing and I'm lucky to have you! \uc0\u10084 \u65039 \
+                                    </p>\
+                                </div>\
+                            </div>\
+                        </div>\
+                    </div>\
+                );\
+            \}\
+\
+            return (\
+                <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-indigo-100 p-4 py-8">\
+                    <div className="max-w-4xl mx-auto">\
+                        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">\
+                            <div className="flex items-center justify-between">\
+                                <div className="flex items-center gap-3">\
+                                    <Icon type="code" className="w-8 h-8 text-indigo-600" />\
+                                    <h1 className="text-3xl font-bold text-gray-800">Coding Challenge</h1>\
+                                </div>\
+                                <div className="flex items-center gap-2 bg-indigo-100 px-4 py-2 rounded-full">\
+                                    <Icon type="clock" className="w-5 h-5 text-indigo-600" />\
+                                    <span className="font-mono text-xl font-semibold text-indigo-600">\
+                                        \{formatTime(timeElapsed)\}\
+                                    </span>\
+                                </div>\
+                            </div>\
+                        </div>\
+\
+                        <div className="bg-white rounded-2xl shadow-lg p-6 mb-6">\
+                            <div className="flex items-center justify-between mb-4">\
+                                \{levels.map((level, index) => (\
+                                    <div key=\{index\} className="flex items-center">\
+                                        <div className=\{`flex items-center justify-center w-12 h-12 rounded-full $\{\
+                                            index < currentLevel ? 'bg-green-500' :\
+                                            index === currentLevel ? 'bg-indigo-600' :\
+                                            'bg-gray-300'\
+                                        \} text-white font-bold`\}>\
+                                            \{index < currentLevel ? <Icon type="check" className="w-6 h-6" /> :\
+                                             index === currentLevel ? <Icon type="code" className="w-6 h-6" /> :\
+                                             <Icon type="lock" className="w-6 h-6" />\}\
+                                        </div>\
+                                        \{index < levels.length - 1 && (\
+                                            <div className=\{`w-16 h-1 $\{index < currentLevel ? 'bg-green-500' : 'bg-gray-300'\}`\} />\
+                                        )\}\
+                                    </div>\
+                                ))\}\
+                            </div>\
+                            <p className="text-center text-gray-600">\
+                                Level \{currentLevel + 1\} of \{levels.length\}\
+                            </p>\
+                        </div>\
+\
+                        <div className="bg-white rounded-2xl shadow-lg p-8">\
+                            <div className="flex items-center gap-2 mb-4">\
+                                <Icon type="sparkles" className="w-6 h-6 text-indigo-600" />\
+                                <h2 className="text-3xl font-bold text-gray-800">\
+                                    \{levels[currentLevel].title\}\
+                                </h2>\
+                            </div>\
+                            <p className="text-lg text-gray-600 mb-6">\
+                                \{levels[currentLevel].description\}\
+                            </p>\
+\
+                            <div className="bg-gray-900 rounded-lg p-6 mb-6 overflow-x-auto">\
+                                <pre className="text-green-400 font-mono text-sm">\
+                                    \{levels[currentLevel].code\}\
+                                </pre>\
+                            </div>\
+\
+                            <div className="bg-blue-50 border-l-4 border-blue-400 p-4 mb-6">\
+                                <p className="text-sm font-semibold text-blue-800">\uc0\u55357 \u56481  Hint:</p>\
+                                <p className="text-blue-700">\{levels[currentLevel].hint\}</p>\
+                            </div>\
+\
+                            <div className="space-y-4">\
+                                <label className="block text-lg font-semibold text-gray-700">\
+                                    Your Answer:\
+                                </label>\
+                                <input\
+                                    type="text"\
+                                    value=\{userAnswers[currentLevel]\}\
+                                    onChange=\{(e) => handleInputChange(currentLevel, e.target.value)\}\
+                                    className="w-full px-4 py-3 text-lg border-2 border-indigo-300 rounded-lg focus:outline-none focus:border-indigo-500"\
+                                    placeholder="Enter your answer..."\
+                                    onKeyPress=\{(e) => e.key === 'Enter' && handleSubmit(currentLevel)\}\
+                                />\
+                                <button\
+                                    onClick=\{() => handleSubmit(currentLevel)\}\
+                                    className="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white px-8 py-4 rounded-lg text-lg font-semibold hover:from-indigo-600 hover:to-purple-700 transition-all transform hover:scale-105 shadow-lg"\
+                                >\
+                                    Submit Answer \uc0\u10024 \
+                                </button>\
+                            </div>\
+                        </div>\
+                    </div>\
+                </div>\
+            );\
+        \};\
+\
+        ReactDOM.render(<ValentineHackathon />, document.getElementById('root'));\
+    </script>\
+</body>\
+</html>}
